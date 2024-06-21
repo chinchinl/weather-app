@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import axios from 'axios';
 import './WeatherApp.css'
 import search_icon from '../Assets/search.png'
@@ -14,6 +14,7 @@ const WeatherApp = () => {
 
     let api_key = "56ea9b6a1bf7425723c8b0f1f2a94417";
     const [wicon, setWicon] = useState(cloud_icon);
+    const inputRef = useRef();
 
     const search = async () => {
         const element = document.getElementsByClassName("cityInput");
@@ -57,10 +58,25 @@ const WeatherApp = () => {
             console.error('There was an error making the request:', error);
         })
     }
+
+    useEffect(()=> {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Enter') {
+                search();
+            }
+        };
+
+        const inputElement = inputRef.current;
+        inputElement.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            inputElement.removeEventListener('keydown', handleKeyDown);
+        };
+    })
   return (
     <div className="container">
         <div className="top-bar">
-            <input type="text" class="cityInput" placeholder="Search" />
+            <input type="text" class="cityInput" placeholder="Search" ref={inputRef} />
             <div className="search-icon" onClick={() => {search()}}>
                 <img src={search_icon} alt="" />
             </div>
